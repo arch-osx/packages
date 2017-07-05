@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -euo pipefail
+
+repo=$1
+
+ssh root@download.arch-osx.org "cd /srv/www/download.arch-osx.org/packages/$repo/sierra/x86_64/ && repo-add -n -R $repo.db.tar.gz *.pkg.tar.gz"

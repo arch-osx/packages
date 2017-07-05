@@ -1,0 +1,5 @@
+#!/bin/bash
+
+for f in */*/*.pkg.tar.gz; do
+    rm -v "$f"
+done
