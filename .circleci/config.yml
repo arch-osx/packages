@@ -1,0 +1,69 @@
+version: 2
+
+jobs:
+    explore1:
+        macos:
+            xcode: "9.0"
+        steps:
+            - run: uname -a
+            - run: sudo mkdir -p /opt
+            - run: ls -l /opt
+            - run: ls -l /usr/local
+            - run: cat ~/.bashrc
+            - run: cat ~/.bash_profile
+            - run: chruby || true
+            - run: echo "$PATH"
+    explore2:
+        macos:
+            xcode: "8.3.3"
+        steps:
+            - run: uname -a
+            - run: sudo mkdir -p /opt
+            - run: ls -l /opt
+            - run: ls -l /usr/local
+            - run: cat ~/.bashrc
+            - run: cat ~/.bash_profile
+            - run: chruby || true
+            - run: echo "$PATH"
+    explore3:
+        macos:
+            xcode: "9.1.0"
+        steps:
+            - run: uname -a
+            - run: sudo mkdir -p /opt
+            - run: ls -l /opt
+            - run: ls -l /usr/local
+            - run: cat ~/.bashrc
+            - run: cat ~/.bash_profile
+            - run: chruby || true
+            - run: echo "$PATH"
+    build:
+        macos:
+            xcode: "8.3.3"
+        steps:
+            - run: sudo mkdir -p /opt
+            - run: sed -i~ -e '/^# Homebrew alternate path/ {N;N;d;}' ~/.bashrc
+            - run: sed -i~ -e '/^# Homebrew alternate path/ {N;N;d;}' ~/.bash_profile
+            - run: sed -i~ -e '/^# chruby hooks/ {N;N;N;d;}' ~/.bashrc
+            - run: sed -i~ -e '/^# chruby hooks/ {N;N;N;d;}' ~/.bash_profile
+            - run: sudo rm -rf /usr/local/*
+            - run: sudo rm -rf /opt/*
+            - run: curl -O http://download.arch-osx.org/snapshots/arch-osx-snapshot.tar.gz
+            - run: sudo tar -C / -xvpzf arch-osx-snapshot.tar.gz
+            - run: echo 'export PATH="/opt/arch/bin:/opt/arch/sbin:$PATH"' >> ~/.bashrc
+            - run: echo 'export PATH="/opt/arch/bin:/opt/arch/sbin:$PATH"' >> ~/.bash_profile
+            - run: sudo sed -i~ -e 's/^#Server/Server/' /opt/arch/etc/pacman.d/mirrorlist
+
+            - run: sudo pacman --sync --refresh --noprogressbar
+            - run: sudo pacman --sync --sysupgrade --noprogressbar --noconfirm --downloadonly
+            - run: sudo pacman --sync --sysupgrade --noprogressbar --noconfirm
+            - run: sudo pacman --sync --noprogressbar --noconfirm base-devel parallel
+
+
+workflows:
+    version: 2
+    explore:
+        jobs:
+            - explore1
+            - explore2
+            - explore3
